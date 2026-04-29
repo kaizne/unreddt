@@ -5,5 +5,23 @@
     "manifest_version": 3,
     "action": {
         "default_popup": "index.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://*.reddit.com/*"],
+            "css": ["hide.css"],
+            "js": ["scripts/content.js"],
+            "run_at": "document_end"
+        }
+    ],
+    "permissions": [
+        "declarativeNetRequest"
+    ],
+    "declarative_net_request": {
+        "rule_resources": [{
+            "id": "ruleset_1",
+            "enabled": true,
+            "path": "rules.json"
+        }]
     }
 }

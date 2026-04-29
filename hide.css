@@ -1,0 +1,11 @@
+#left-sidebar {
+    display: none !important;
+}
+
+#popular-communities-list {
+    display: none !important;
+}
+
+alert-controller {
+    display: none !important;
+}
