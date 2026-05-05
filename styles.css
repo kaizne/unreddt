@@ -1,0 +1,11 @@
+label {
+  white-space: nowrap;
+}
+
+.toggle {
+  display: flex
+}
+
+input:checked {
+  outline: 2px solid deeppink;
+}
