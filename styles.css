@@ -1,11 +1,27 @@
-label {
-  white-space: nowrap;
-}
-
 .toggle {
-  display: flex
+  display: flex;
+  position: relative;
+  width: 120px;
+  height: 30px;
 }
 
 input:checked {
   outline: 2px solid deeppink;
+}
+
+.slider {
+  position: absolute;
+  top: 0; left: 60px; right: 0; bottom: 0;
+  border-radius: 34px;
+  background-color: #ccc;
+}
+
+.slider:before {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: #3498db;
+  position: absolute;
+  left: 4px; bottom: 4px;
+  content: "";
 }
