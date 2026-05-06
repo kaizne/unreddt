@@ -1,5 +1,13 @@
-#left-sidebar {
+.hide-left-sidebar {
     display: none !important;
+}
+
+#left-sidebar {
+    
+}
+
+body.hide-left-sidebar #left-sidebar {
+    display: none !important
 }
 
 #popular-communities-list {
