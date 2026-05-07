@@ -11,7 +11,7 @@
             "matches": ["https://*.reddit.com/*"],
             "css": ["hide.css"],
             "js": ["scripts/content.js"],
-            "run_at": "document_end"
+            "run_at": "document_start"
         }
     ],
     "permissions": [
