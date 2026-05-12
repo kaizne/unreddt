@@ -1,66 +1,65 @@
-/*
-function updateUI() {
-    chrome.storage.sync.get('hideSidebar', (data) => {
-        if (data.hideSidebar) {
-            document.body.classList.add('hide-left-sidebar')
-        } else {
-            document.body.classList.remove('hide-left-sidebar')
-        }
-    })
-}
+const styleTag = document.createElement('style')
+styleTag.id = 'hide-left-sidebar'
+styleTag.innerHTML = `#left-sidebar-container { display: none !important; }`
 
-updateUI()
+const styleTag2 = document.createElement('style')
+styleTag2.id = 'hide-popular-communities-list'
+styleTag2.innerHTML = `.right-rail-popular-communities { display: none !important; }`
 
-chrome.storage.onChanged.addListener((changes) => {
-    if (changes.hideSidebar) {
-        updateUI()
-    }
-})
+const styleTag3 = document.createElement('style')
+styleTag3.id = 'hide-header'
+styleTag3.innerHTML = `.h-header-large { display: none !important; }`
 
-function init() {
-    updateUI();
-    
-    // Listen for storage changes
-    chrome.storage.onChanged.addListener((changes) => {
-        if (changes.hideSidebar) {
-            updateUI();
-        }
-    });
-}
-
-// Check if DOM is already loaded, otherwise wait for it
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-*/
-
-// 1. Create a style element immediately
-const styleTag = document.createElement('style');
-styleTag.id = 'hide-left-sidebar';
-// Replace '.sidebar-selector' with the actual CSS selector for the sidebar
-styleTag.innerHTML = `#left-sidebar { display: none !important; }`;
-
-function applyPreference() {
+function applySideBarPreference() {
     chrome.storage.sync.get('hideSidebar', (data) => {
         if (data.hideSidebar) {
             // Append the style to the root element (available at document_start)
-            document.documentElement.appendChild(styleTag);
+            document.documentElement.appendChild(styleTag)
         } else if (styleTag.parentNode) {
             // Remove it if the user wants the sidebar shown
-            styleTag.remove();
+            styleTag.remove()
         }
     });
 }
 
-// Run immediately at document_start
-applyPreference();
+applySideBarPreference();
 
-// Listen for toggles while the user is on the page
+function applyPopularCommunitiesPreference() {
+    chrome.storage.sync.get('hidePopularCommunities', (data) => {
+        if (data.hidePopularCommunities) {
+            // Append the style to the root element (available at document_start)
+            document.documentElement.appendChild(styleTag2)
+        } else if (styleTag2.parentNode) {
+            // Remove it if the user wants the sidebar shown
+            styleTag2.remove()
+        }
+    });
+}
+
+applyPopularCommunitiesPreference();
+
+function applyHeaderPreference() {
+    chrome.storage.sync.get('hideHeader', (data) => {
+        if (data.hideHeader) {
+            // Append the style to the root element (available at document_start)
+            document.documentElement.appendChild(styleTag3)
+        } else if (styleTag3.parentNode) {
+            // Remove it if the user wants the sidebar shown
+            styleTag3.remove()
+        }
+    });
+}
+
+applyHeaderPreference();
+
 chrome.storage.onChanged.addListener((changes) => {
     if (changes.hideSidebar) {
-        applyPreference();
+        applySideBarPreference()
+    } 
+    if (changes.hidePopularCommunities) {
+        applyPopularCommunitiesPreference()
     }
-});
+    if (changes.hideHeader) {
+        applyHeaderPreference()
+    }
+})

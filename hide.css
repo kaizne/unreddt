@@ -8,13 +8,23 @@
     
 }
 
-body.hide-left-sidebar #left-sidebar {
+body.hide-left-sidebar #left-sidebar-container {
     display: none !important;
 }
 
+body.hide-popular-communities-list .right-rail-popular-communities {
+    display: none !important;
+}
+
+body.hide-header .h-header-large {
+    display: none !important;
+}
+
+/*
 #popular-communities-list {
     display: none !important;
 }
+*/
 
 alert-controller {
     display: none !important;
