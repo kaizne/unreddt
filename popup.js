@@ -33,3 +33,29 @@ chrome.storage.sync.get('hideHeader', (data) => {
 chrome.storage.sync.get('infiniteScrollToggle', (data) => {
     infiniteScrollToggle.checked = data.infiniteScroll
 })
+
+const SCROLL_RULE_ID = 1
+
+infiniteScrollToggle.addEventListener('change', async () => {
+    const isEnabled = infiniteScrollToggle.checked;
+    chrome.storage.sync.set({ disableInfiniteScroll: isEnabled })
+
+    if (isEnabled) {
+        await chrome.declarativeNetRequest.updateDynamicRules({
+            addRules: [{
+                "id": 1,
+                "priority": 1,
+                "action": { "type": "block" },
+                "condition": {
+                "urlFilter": "reddit.com/svc/shreddit/feeds/*after=*",
+                "resourceTypes": ["xmlhttprequest"]
+                }
+            }],
+            removeRuleIds: [SCROLL_RULE_ID]
+        })
+    } else {
+        await chrome.declarativeNetRequest.updateDynamicRules({
+            removeRuleIds: [SCROLL_RULE_ID]
+        })
+    }
+})
