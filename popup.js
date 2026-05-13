@@ -27,14 +27,32 @@ handleToggle(popularCommunitiesToggle, 'hidePopularCommunities')
 handleToggle(headerToggle, 'hideHeader')
 
 const stopAutoplay = () => {
-    const videos = document.querySelectorAll('video')
-    videos.forEach(video => {
-        video.autoplay = false
-        video.removeAttribute('autoplay')
-        if (!video.paused) {
-            video.pause()
+    const script = document.createElement('script')
+    script.textContent = `
+        // Store the original play function
+        const originalPlay = HTMLMediaElement.prototype.play;
+
+        // Override the play function
+        HTMLMediaElement.prototype.play = function() {
+        // Check if the play attempt is "trusted" (initiated by a human click)
+        // Or check a custom attribute we set on click
+        if (this.dataset.userAllowed === "true") {
+            return originalPlay.apply(this, arguments);
+        } else {
+            console.log("Autoplay blocked by your script!");
+            // Return a resolved promise to prevent console errors from the browser
+            return Promise.resolve();
         }
-    })
+        };
+
+        // Add a listener to set the flag when the user actually clicks the video
+        document.addEventListener('click', (e) => {
+        if (e.target.tagName === 'VIDEO') {
+            e.target.dataset.userAllowed = "true";
+            e.target.play();
+        }
+        }, true);
+    `
 }
 
 autoplayToggle.addEventListener('change', () => {
