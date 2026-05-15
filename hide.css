@@ -29,3 +29,7 @@ body.hide-header .h-header-large {
 alert-controller {
     display: none !important;
 }
+
+video[autoplay] {
+    --autoplay: off !important; /* Modern Chromium hint */
+}
