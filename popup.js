@@ -26,43 +26,48 @@ handleToggle(sidebarToggle, 'hideSidebar')
 handleToggle(popularCommunitiesToggle, 'hidePopularCommunities')
 handleToggle(headerToggle, 'hideHeader')
 
-const stopAutoplay = () => {
-    const script = document.createElement('script')
-    script.textContent = `
-        // Store the original play function
-        const originalPlay = HTMLMediaElement.prototype.play;
-
-        // Override the play function
-        HTMLMediaElement.prototype.play = function() {
-        // Check if the play attempt is "trusted" (initiated by a human click)
-        // Or check a custom attribute we set on click
-        if (this.dataset.userAllowed === "true") {
-            return originalPlay.apply(this, arguments);
-        } else {
-            console.log("Autoplay blocked by your script!");
-            // Return a resolved promise to prevent console errors from the browser
-            return Promise.resolve();
-        }
-        };
-
-        // Add a listener to set the flag when the user actually clicks the video
-        document.addEventListener('click', (e) => {
-        if (e.target.tagName === 'VIDEO') {
-            e.target.dataset.userAllowed = "true";
-            e.target.play();
-        }
-        }, true);
-    `
-}
-
-autoplayToggle.addEventListener('change', () => {
-    const isEnabled = autoplayToggle.checked
-    chrome.storage.sync.set({ disableAutoplay: isEnabled })
+autoplayToggle.addEventListener('change', async () => {
+    const isEnabled = autoplayToggle.checked;
+    await chrome.storage.sync.set({ disableAutoplay: isEnabled });
 
     if (isEnabled) {
-        stopAutoplay()
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        
+        if (tab?.id) {
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: injectAutoplayBlocker,
+                world: 'MAIN'
+            });
+        }
+    } else {
+        chrome.tabs.reload(tab.id);
     }
-})
+});
+
+function injectAutoplayBlocker() {
+    if (window.hasAutoplayBlockerRun) return;
+    window.hasAutoplayBlockerRun = true;
+
+    const originalPlay = HTMLMediaElement.prototype.play;
+
+    HTMLMediaElement.prototype.play = function(...args) {
+        if (this.dataset.userAllowed === "true") {
+            return originalPlay.apply(this, args);
+        } else {
+            console.log("Autoplay blocked by your script!");
+            return Promise.resolve();
+        }
+    };
+
+    window.addEventListener('click', (e) => {
+        const video = e.target.closest('video');
+        if (video) {
+            video.dataset.userAllowed = "true";
+            video.play();
+        }
+    }, true);
+}
 
 const SCROLL_RULE_ID = 1
 

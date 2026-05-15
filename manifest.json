@@ -15,7 +15,7 @@
         }
     ],
     "permissions": [
-        "declarativeNetRequest", "storage"
+        "declarativeNetRequest", "storage", "scripting"
     ],
     "declarative_net_request": {
         "rule_resources": [{
