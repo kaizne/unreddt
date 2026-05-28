@@ -15,5 +15,5 @@ alert-controller {
 }
 
 video[autoplay] {
-    --autoplay: off !important; /* Modern Chromium hint */
+    --autoplay: off !important;
 }
